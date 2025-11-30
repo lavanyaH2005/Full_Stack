@@ -5,16 +5,19 @@ import axios from "axios";
 function View() {
   const { id } = useParams();
 
+  const API =import.meta.env.VITE_API_URL || ""
   const [user, setUser] = useState({
     username: "",
     name: "",
     email: "",
   });
 
-  const loadUser = async () => {
-    const result = await axios.get(`http://localhost:8080/user/${id}`);
+ const loadUser = async () => {
+    // ✅ Use environment variable for backend URL
+    const result = await axios.get(`${API}/user/${id}`);
     setUser(result.data);
-  };
+};
+
 
   useEffect(() => {
     loadUser();

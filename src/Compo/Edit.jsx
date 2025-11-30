@@ -6,32 +6,41 @@ function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Use environment variable for backend URL, fallback to empty string (relative URL)
+  const API =import.meta.env.VITE_API_URL || "";
+
   const [user, setUser] = useState({
     username: "",
     name: "",
     email: ""
   });
 
-  // FETCH USER BY ID (for pre-fill)
   useEffect(() => {
     loadUser();
   }, []);
 
   const loadUser = async () => {
-    const result = await axios.get(`http://localhost:8080/user/${id}`);
-    setUser(result.data);
+    try {
+      const result = await axios.get(`${API}/user/${id}`);
+      setUser(result.data);
+    } catch (error) {
+      console.error("Failed to load user:", error.response?.data || error.message);
+    }
   };
 
-  // UPDATE VALUES IN STATE
   const onInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  // SUBMIT UPDATED DATA
   const onSubmit = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:8080/user/${id}`, user);
-    navigate("/"); // go back to home
+    try {
+      await axios.put(`${API}/user/${id}`, user);
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to update user:", error.response?.data || error.message);
+      alert("Failed to update user. Please try again.");
+    }
   };
 
   return (
@@ -42,7 +51,7 @@ function Edit() {
           ✨ Update User Details
         </h2>
 
-        <form onSubmit={(e) => onSubmit(e)}>
+        <form onSubmit={onSubmit}>
 
           <div className="mb-3">
             <label className="form-label fw-semibold">Username</label>
@@ -52,6 +61,7 @@ function Edit() {
               value={user.username}
               onChange={onInputChange}
               className="form-control shadow-sm"
+              required
             />
           </div>
 
@@ -63,6 +73,7 @@ function Edit() {
               value={user.name}
               onChange={onInputChange}
               className="form-control shadow-sm"
+              required
             />
           </div>
 
@@ -74,6 +85,7 @@ function Edit() {
               value={user.email}
               onChange={onInputChange}
               className="form-control shadow-sm"
+              required
             />
           </div>
 

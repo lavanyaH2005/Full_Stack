@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 function Add() {
 
     const navigate = useNavigate();
+
+    const API = import.meta.env.VITE_API_URL|| "";
+
 const [adduser, setAdduser] = useState({
     username:"",
     name:"",
@@ -18,11 +21,14 @@ const {username, name, email} = adduser;
     setAdduser({ ...adduser, [e.target.name]: e.target.value });
   };
  
-  const onSubmitdet = async (e) => {
-    e.preventDefault();
-    await axios.post("http://localhost:8080/user",adduser);
-    navigate("/");
-  };
+   
+    const onSubmitdet = async (e) => {
+        e.preventDefault();
+        // ✅ Use environment variable for backend URL
+        await axios.post(`${API}/user`, adduser);
+
+        navigate("/");
+    };
 
 
   return (
